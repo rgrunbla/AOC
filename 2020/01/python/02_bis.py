@@ -3,6 +3,7 @@
 with open("../input", "r") as f:
     data = sorted([int(x) for x in f.read().splitlines()])
     for k in range(len(data)):
+        print("k = %s" % k)
         i = 0
         j = len(data)-1
         while True:

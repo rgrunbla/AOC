@@ -15,12 +15,19 @@ fn main() {
             }
         }
         stack.sort();
-        for number1 in stack.iter() {
-            for number2 in stack.iter() {
-                if number1+number2 == 2020 {
-                    println!("{}", number1*number2);
-                    return;
-                }
+
+        let mut start = 0;
+        let mut end = stack.len()-1;
+        loop {
+            let front = stack[start];
+            let back = stack[end];
+            if front + back == 2020 {
+                println!("{}", front * back);
+                return;
+            } else if front + back > 2020 {
+                end -= 1;
+            } else {
+                start+=1;
             }
         }
     }

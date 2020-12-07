@@ -5,6 +5,8 @@ with open("../input", "r") as f:
     i = 0
     j = len(data)-1
     while True:
+        if i > j:
+            break
         if (data[i]+data[j]) == 2020:
             print(data[i]*data[j])
             exit(0)

@@ -15,11 +15,14 @@ fn main() {
             }
         }
         stack.sort();
-        for number1 in stack.iter() {
-            for number2 in stack.iter() {
-                if number1+number2 == 2020 {
-                    println!("{}", number1*number2);
-                    return;
+
+        for number0 in stack.iter() {
+            for number1 in stack.iter() {
+                for number2 in stack.iter() {
+                    if number0+number1+number2 == 2020 {
+                        println!("{}", number0*number1*number2);
+                        return
+                    }
                 }
             }
         }
