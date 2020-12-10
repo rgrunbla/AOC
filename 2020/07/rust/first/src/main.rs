@@ -1,3 +1,6 @@
+#[macro_use] extern crate lazy_static;
+extern crate regex;
+
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -18,14 +21,16 @@ fn split_once(in_string: &str, car: char) -> (&str, &str) {
     (first, second)
 }
 
-fn parse_line<'a>(line: &'a str, graph: &mut HashMap<String, Vec<String>>) {
-    // light chartreuse bags contain 1 mirrored yellow bag, 2 vibrant violet bags.
-    let container = Regex::new(r"^([A-Za-z ]*) bags contain ").unwrap();
-    let container =  &container.captures(line).unwrap()[1];
-    let contained = Regex::new(r"(\d+) ([A-Za-z ]*) bag").unwrap();
+fn parse_line(line: String, graph: &mut HashMap<String, Vec<String>>) {
+    lazy_static! {
+        static ref container: Regex = Regex::new(r"^([A-Za-z ]*) bags contain ").unwrap();
+        static ref contained: Regex = Regex::new(r"(\d+) ([A-Za-z ]*) bag").unwrap();
+    }
 
-    for _match in contained.captures_iter(line) {
-        graph.entry(_match[2].to_string()).or_insert(vec![container.to_string()]).push(container.to_string());
+    let container_capture = &container.captures(line.as_str()).unwrap()[1];    
+
+    for _match in contained.captures_iter(&line) {
+        graph.entry(_match[2].to_string()).or_insert(vec![container_capture.to_string()]).push(container_capture.to_string());
     }
 }
 
@@ -37,7 +42,7 @@ fn main() {
     if let Ok(lines) = read_lines(filename) {
         for line in lines {
             if let Ok(line) = line {
-                parse_line(&line, &mut graph);   
+                parse_line(line, &mut graph);   
             }
         }
         let mut set = HashSet::new();
@@ -51,7 +56,7 @@ fn main() {
             for key in set.clone() {
                 match graph.get(&key) {
                     Some(item) => for color in item { set.insert(color.to_string()); },
-                    None => println!("{} has no parent", key)
+                    None => () //println!("{} has no parent", key)
                 }
             }
         }
