@@ -1,0 +1,73 @@
+warning: unused import: `std::cmp::Ordering`
+ --> src/main.rs:5:5
+  |
+5 | use std::cmp::Ordering;
+  |     ^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: 1 warning emitted
+
+    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
+     Running `target/debug/first`
+
+L.LL.LL.LL
+LLLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLLL
+L.LLLLLL.L
+L.LLLLL.LL
+
+
+#.##.##.##
+#######.##
+#.#.#..#..
+####.##.##
+#.##.##.##
+#.#####.##
+..#.#.....
+##########
+#.######.#
+#.#####.##
+
+
+#.##.##.##
+#LLLLL#.##
+#.L.L..#..
+#LLL.##.##
+#.LL.LL.LL
+#.#LLL#.##
+..L.L.....
+#LLLLLL###
+#.LLLLLL.#
+#.#LLL#.##
+
+
+#.##.##.##
+#LLLLL#.##
+#.#.L..#..
+#L##.##.##
+#.LL.LL.LL
+#.#L#L#.##
+..L.#.....
+#L####L###
+#.LL#LLL.#
+#.#L#L#.##
+
+Occupied: 46
+
+#.##.##.##
+#LLLLL#.##
+#.#.L..#..
+#L##.##.##
+#.LL.LL.LL
+#.#L#L#.##
+..L.#.....
+#L####L###
+#.LL#LLL.#
+#.#L#L#.##
+
