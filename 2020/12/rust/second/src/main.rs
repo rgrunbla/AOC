@@ -8,10 +8,6 @@ where P: AsRef<Path>, {
     Ok(io::BufReader::new(file).lines())
 }
 
-fn custom_rounding(val: f32) -> i32 {
-    ((val * 100.0).round() as i32)/100
-}
-
 enum Actions {
     N(i32),
     S(i32),
@@ -59,14 +55,14 @@ fn main() {
                 Actions::L(a) => {
                     let newx = (waypoint.x as f32) * a.cos() - (waypoint.y as f32) * a.sin();
                     let newy =(waypoint.x as f32) * a.sin() + (waypoint.y as f32) * a.cos();
-                    waypoint.x = custom_rounding(newx);
-                    waypoint.y = custom_rounding(newy);
+                    waypoint.x = newx.round() as i32;
+                    waypoint.y = newy.round() as i32;
                 },
                 Actions::R(a) => {
                     let newx = (waypoint.x as f32) * (-a).cos() - (waypoint.y as f32) * (-a).sin();
                     let newy =(waypoint.x as f32) * (-a).sin() + (waypoint.y as f32) * (-a).cos();
-                    waypoint.x = custom_rounding(newx);
-                    waypoint.y = custom_rounding(newy);
+                    waypoint.x = newx.round() as i32;
+                    waypoint.y = newy.round() as i32;
                 },
                 Actions::F(i) => {
                     for _ in 0..i {
