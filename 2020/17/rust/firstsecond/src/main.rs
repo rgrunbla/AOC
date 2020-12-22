@@ -62,7 +62,7 @@ fn main() {
                         None => (),
                     }
                 }
-                if !(active == 2 || active == 3) {
+                if active < 2 || active > 3 {
                     space.remove(item);
                 }
             }
