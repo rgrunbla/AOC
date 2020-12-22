@@ -1,7 +1,9 @@
 extern crate nom;
 
+use nohash_hasher::IntMap;
+
 use std::fs;
-use std::collections::HashMap;
+//use std::collections::IntMap;
 
 pub enum Either<L, M, R> {
     Left(L),
@@ -22,21 +24,21 @@ use nom::{
   use std::str::FromStr;
   
   /* Single Rule */
-  fn factor(i: &str) -> IResult<&str, i64> {
+  fn factor(i: &str) -> IResult<&str, u16> {
       map_res(delimited(space0, digit1, space0), FromStr::from_str)(i)
   }
 
-  fn term(i: &str) -> IResult<&str, Either<char, Vec<i64>, (Vec<i64>, Vec<i64>)>> {
+  fn term(i: &str) -> IResult<&str, Either<char, Vec<u16>, (Vec<u16>, Vec<u16>)>> {
     many0(factor)
     (i).map(|(next_input, res)| (next_input, Either::Middle(res)))
   }
 
-  fn unique_char(i: &str) -> IResult<&str, Either<char, Vec<i64>, (Vec<i64>, Vec<i64>)>> {
+  fn unique_char(i: &str) -> IResult<&str, Either<char, Vec<u16>, (Vec<u16>, Vec<u16>)>> {
     delimited(space0, delimited(char('"'), anychar, char('"')), space0)
     (i).map(|(next_input, res)| (next_input, Either::Left(res)))
   }
 
-  fn simple_rule(i: &str) -> IResult<&str, Either<char, Vec<i64>, (Vec<i64>, Vec<i64>)>> {
+  fn simple_rule(i: &str) -> IResult<&str, Either<char, Vec<u16>, (Vec<u16>, Vec<u16>)>> {
       alt(
         (
             unique_char,
@@ -45,7 +47,7 @@ use nom::{
     )(i)
   }
 
-  fn complex_rule(i: &str) -> IResult<&str, Either<char, Vec<i64>, (Vec<i64>, Vec<i64>)>> {
+  fn complex_rule(i: &str) -> IResult<&str, Either<char, Vec<u16>, (Vec<u16>, Vec<u16>)>> {
     separated_pair(term, char('|'), term)
     (i)
     .map(|(next_input, res)| {
@@ -56,7 +58,7 @@ use nom::{
     })
   }
 
-  fn expr(i: &str) -> IResult<&str, Either<char, Vec<i64>, (Vec<i64>, Vec<i64>)>> {
+  fn expr(i: &str) -> IResult<&str, Either<char, Vec<u16>, (Vec<u16>, Vec<u16>)>> {
         alt(
             (
                 complex_rule,
@@ -65,18 +67,17 @@ use nom::{
         )(i)
   }
 
-fn is_valid<'a>(line: &'a str, idx: &[i64], rules: &HashMap<i64, Either<char, Vec<i64>, (Vec<i64>, Vec<i64>)>>) -> bool {
+fn is_valid<'a>(line: &'a str, idx: &[u16], rules: &IntMap<u16, Either<char, Vec<u16>, (Vec<u16>, Vec<u16>)>>) -> bool {
     match idx.len() {
         0 => {
             return line.len() == 0
         },
         _ => {
-            //println!("Rule {}", idx[0]);
             match &rules[&idx[0]] {
                 Either::Left(car) => {
                     return match line.len() {
                         0 => false,
-                        i => match line.chars().nth(0) {
+                        _ => match line.chars().nth(0) {
                                 Some(x) if x == *car => {
                                     is_valid(&line[1..], &idx[1..], rules)
                                 },
@@ -98,29 +99,24 @@ fn is_valid<'a>(line: &'a str, idx: &[i64], rules: &HashMap<i64, Either<char, Ve
 
 fn main() {
     let filename = "/home/remy/AOC/2020/19/input";
-    let mut rules_map: HashMap<i64, Either<char, Vec<i64>, (Vec<i64>, Vec<i64>)>> = HashMap::new();
-
+    let mut rules_map: IntMap<u16, Either<char, Vec<u16>, (Vec<u16>, Vec<u16>)>> = IntMap::default();
     let data = fs::read_to_string(filename).unwrap();
-    let data: Vec<&str> = data.split("\n\n").collect();
-    let rules = data[0];
-    let data = data[1];
-    for rule in rules.lines() {
+    for rule in data.lines() {
+        if rule.is_empty() {
+            break;
+        }
         let mut tokens = rule.split(":");
-        let number = &tokens.next().unwrap();
-        let number = number.parse::<i64>().unwrap();
+        let number = &tokens.next().unwrap().parse::<u16>().unwrap();
         let rule = &tokens.next().unwrap().trim();
-        println!("{} -> {}", number, rule);
         match expr(rule) {
             Ok((_, foo)) => {
-                rules_map.insert(number, foo);
+                rules_map.insert(*number, foo);
             },
-            Err(a) => {
-                panic!("wat");
-            }
+            Err(_) => panic!("wat")
         }
     }
 
-    let mut valid: i64 = 0;
+    let mut valid: u16 = 0;
     for line in data.lines() {
         if is_valid(line, &vec![0], &rules_map) {
             valid += 1;
