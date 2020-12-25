@@ -1,0 +1,8 @@
+[package]
+name = "first_second"
+version = "0.1.0"
+authors = ["Rémy Grünblatt <remy@grunblatt.org>"]
+edition = "2018"
+
+[dependencies]
+fnv = "1.0.3"
